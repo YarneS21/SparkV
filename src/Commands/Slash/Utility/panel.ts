@@ -82,12 +82,11 @@ async function execute(bot: any, message: any, args: string[], command: any, dat
 
 	if (state === "tickets") {
 		const color = data.options.getString("color") || "Blue";
-
 		await message.channel.send({
 			embeds: [{
 				title: data.options.getString("title") || await message.translate(`${bot.config.emojis.ticket} | Get Support`),
 				description: data.options.getString("description") || await message.translate("Need help? Click the button below to create a support ticket."),
-				color: color
+				color: Colors[color as keyof typeof Colors]
 			}],
 			components: [{
 				type: 1,
@@ -173,7 +172,7 @@ async function execute(bot: any, message: any, args: string[], command: any, dat
 			embeds: [{
 					title: data.options.getString("title") || `${bot.config.emojis.special} | Role Select`,
 					description: data.options.getString("description") || "Click the button(s) below to give yourself a role!",
-					color:  Colors[color as keyof typeof Colors]
+					color: Colors[color as keyof typeof Colors]
 				}],
 			components: [{
 					type: 1,
