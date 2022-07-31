@@ -49,16 +49,18 @@ async function execute(bot: any, message: any, args: string[], command: any, dat
 
 	let editedText: string | null | undefined;
 	switch (type) {
-		case "reverse":
+		case "reverse": {
 			editedText = text.split("").reverse().join("");
-		case "emojify":
+			break;
+		} case "emojify": {
 			editedText = text.toLowerCase().split("").map(letter => {
 				if (/[a-z]/g.test(letter)) return `:regional_indicator_${letter}: `;
 				else if (chars[letter as keyof typeof chars]) return `${chars[letter as keyof typeof chars]} `;
 
 				return letter;
 			}).join("");
-		case "asciify":
+			break;
+		} case "asciify": {
 			figlet.text(text, async (err: any, data: any) => {
 				if (err) {
 					console.log(`Failed to figlet text: ${err}`);
@@ -68,9 +70,11 @@ async function execute(bot: any, message: any, args: string[], command: any, dat
 
 				editedText = `\`\`\`${data}\`\`\``;
 			});
-		case "clapify":
+			break;
+		} case "clapify": {
 			editedText = text.trim().split(/ +/g).length === 1 ? text.split("").join(" 👏 ") : text.trim().split(/ +/g).join(" 👏 ");
-		case "zalgo":
+			break;
+		} case "zalgo": {
 			// Special thanks to the package to-zalgo, to who are responcible for creating this part of the text command.
 			// https://github.com/michaelrhodes/to-zalgo/blob/master/index.ts
 			// It had some useless packages that I didn't want taking up my node_modules folder.
@@ -108,8 +112,11 @@ async function execute(bot: any, message: any, args: string[], command: any, dat
 			}
 
 			editedText = result;
-		case "char_count":
+			break;
+		} case "char_count": {
 			editedText = `That text has **${text.length} characters**.`;
+			break;
+		}
 	}
 
 	await message.replyT((editedText?.length ?? 0) >= 2000 ? `${editedText?.slice(0, 1990)}...` : editedText);
