@@ -46,11 +46,11 @@ export default async (content: string, type?: string, moreData?: moreData) => {
 				const errorChannel: any = await bot.channels.fetch("948686231892545547");
 				if (errorChannel) {
 					let embed = {
-						title: `${(moreData?.data?.name || content) ?? "Error"}`,
+						title: `${(moreData?.data?.name || content).slice(0, 50) ?? "Error"}`,
 						description: `**An error occured!**`,
 						fields: [{
 							name: "**Error**",
-							value: `\`\`\`${content}\`\`\``
+							value: `\`\`\`${content.slice(0, 4000)}\`\`\``
 						}],
 						color: Colors.Red,
 						timestamp: new Date()
