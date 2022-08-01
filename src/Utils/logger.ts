@@ -50,7 +50,7 @@ export default async (content: string, type?: string, moreData?: moreData) => {
 						description: `**An error occured!**`,
 						fields: [{
 							name: "**Error**",
-							value: `\`\`\`${content.slice(0, 4000)}\`\`\``
+							value: `\`\`\`${content.slice(0, 1000)}\`\`\``
 						}],
 						color: Colors.Red,
 						timestamp: new Date()
