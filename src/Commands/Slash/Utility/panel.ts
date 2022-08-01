@@ -4,195 +4,339 @@ import canvacord from "canvacord";
 import cmd from "../../../Structures/command";
 
 const CColors = [{
-	name: "white",
+	name: "White",
+	emoji: "⬜",
 	value: "White"
 }, {
-	name: "aqua",
-	value: "Aqua"
-}, {
-	name: "dark_aqua",
-	value: "DarkAqua"
-}, {
-	name: "blue",
+	name: "Blue",
+	emoji: "🟦",
 	value: "Blue"
 }, {
-	name: "dark_blue",
-	value: "DarkBlue"
-}, {
-	name: "green",
+	name: "Green",
+	emoji: "🟩",
 	value: "Green"
 }, {
-	name: "dark_green",
-	value: "DarkGreen"
-}, {
-	name: "purple",
+	name: "Purple",
+	emoji: "🟪",
 	value: "Purple"
 }, {
-	name: "dark_purple",
-	value: "DarkPurple"
-}, {
-	name: "yellow",
+	name: "Yellow",
+	emoji: "🟨",
 	value: "Yellow"
 }, {
-	name: "gold",
-	value: "Gold"
-}, {
-	name: "dark_gold",
-	value: "DarkGold"
-}, {
-	name: "orange",
+	name: "Orange",
+	emoji: "🟧",
 	value: "Orange"
 }, {
-	name: "dark_orange",
-	value: "DarkOrange"
-}, {
-	name: "red",
+	name: "Red",
+	emoji: "🟥",
 	value: "Red"
 }, {
-	name: "dark_red",
-	value: "DarkRed"
+	name: "Black",
+	emoji: "⬛",
+	value: "Black"
 }, {
-	name: "grey",
+	name: "Grey",
+	emoji: "⚫",
 	value: "Grey"
 }, {
-	name: "dark_GREY",
-	value: "DarkGrey"
-}, {
-	name: "darker_grey",
-	value: "DarkerGrey"
-}, {
-	name: "light_grey",
-	value: "LightGrey"
-}, {
-	name: "navy",
-	value: "Navy"
-}, {
-	name: "dark_navy",
-	value: "DarkNavy"
-}, {
-	name: "blurple",
+	name: "Blurple",
+	emoji: "🔵",
 	value: "Blurple"
 }, {
-	name: "random",
+	name: "Random",
+	emoji: "🔀",
 	value: "Random"
 }];
 
 async function execute(bot: any, message: any, args: string[], command: any, data: any) {
-	const state = data.options.getSubcommand();
-
-	if (state === "tickets") {
-		const color = data.options.getString("color") || "Blue";
-		await message.channel.send({
-			embeds: [{
-				title: data.options.getString("title") || await message.translate(`${bot.config.emojis.ticket} | Get Support`),
-				description: data.options.getString("description") || await message.translate("Need help? Click the button below to create a support ticket."),
-				color: Colors[color as keyof typeof Colors]
-			}],
-			components: [{
-				type: 1,
+	switch (data.options.getSubcommand()) {
+		case "tickets": {
+			const color = data.options.getString("color") || "Blue";
+			await message.channel.send({
+				embeds: [{
+					title: data.options.getString("title") || await message.translate(`${bot.config.emojis.ticket} | Get Support`),
+					description: data.options.getString("description") || await message.translate("Need help? Click the button below to create a support ticket."),
+					color: Colors[color as keyof typeof Colors]
+				}],
 				components: [{
-					type: 2,
-					label: await message.translate("Create Ticket"),
-					emoji: bot.config.emojis.ticket,
-					style: 2,
-					customId: "ticket_create"
+					type: 1,
+					components: [{
+						type: 2,
+						label: await message.translate("Create Ticket"),
+						emoji: bot.config.emojis.ticket,
+						style: 2,
+						customId: "ticket_create"
+					}]
 				}]
-			}]
-		});
+			});
 
-		const category = await message.guild.channels.cache.find((c: Channel | any) => (c.name.toLowerCase().includes("support") || c.name.toLowerCase().includes("tickets")) && c.type === "GUILD_CATEGORY") || await message.guild.channels.create("Tickets", { type: "GUILD_CATEGORY" });
-		data.guild.tickets.category = category.id;
-		data.guild.markModified("tickets.category");
-		await data.guild.save();
+			const category = await message.guild.channels.cache.find((c: Channel | any) => (c.name.toLowerCase().includes("support") || c.name.toLowerCase().includes("tickets")) && c.type === "GUILD_CATEGORY") || await message.guild.channels.create("Tickets", { type: "GUILD_CATEGORY" });
+			data.guild.tickets.category = category.id;
+			data.guild.markModified("tickets.category");
+			await data.guild.save();
 
-		await message.replyT(`${bot.config.emojis.success} | Successfully created ticket panel.`);
-	} else if (state === "roles") {
-		const color = data.options.getString("color") || "Blue";
+			await message.replyT(`${bot.config.emojis.success} | Successfully created ticket panel.`);
+			break;
+		} case "roles": {
+			const color = data.options.getString("color") || "Blue";
 
-		const buttons = [];
-		buttons.push({
-			type: 2,
-			label: data.options.getString("role1_text") || "React to get a role",
-			customId: `role_${await data.options.getRole("role1").id}`,
-			style: 2,
-			emoji: data.options.getString("role1_emoji") || null,
-			url: null,
-			disabled: false
-		});
-
-		if (data.options.getRole("role2") && data.options.getString("role2_text")) {
+			const buttons = [];
 			buttons.push({
 				type: 2,
-				label: data.options.getString("role2_text") || "React to get a role",
-				customId: `role_${await data.options.getRole("role2").id}`,
+				label: data.options.getString("role1_text") || "React to get a role",
+				customId: `role_${await data.options.getRole("role1").id}`,
 				style: 2,
-				emoji: data.options.getString("role2_emoji") || null,
+				emoji: data.options.getString("role1_emoji") || null,
 				url: null,
 				disabled: false
 			});
-		}
 
-		if (data.options.getRole("role3") && data.options.getString("role3_text")) {
-			buttons.push({
-				type: 2,
-				label: data.options.getString("role3_text") || "React to get a role",
-				customId: `role_${await data.options.getRole("role3").id}`,
-				style: 2,
-				emoji: data.options.getString("role3_emoji") || null,
-				url: null,
-				disabled: false
-			});
-		}
+			if (data.options.getRole("role2") && data.options.getString("role2_text")) {
+				buttons.push({
+					type: 2,
+					label: data.options.getString("role2_text") || "React to get a role",
+					customId: `role_${await data.options.getRole("role2").id}`,
+					style: 2,
+					emoji: data.options.getString("role2_emoji") || null,
+					url: null,
+					disabled: false
+				});
+			}
 
-		if (data.options.getRole("role4") && data.options.getString("role4_text")) {
-			buttons.push({
-				type: 2,
-				label: data.options.getString("role4_text") || "React to get a role",
-				customId: `role_${await data.options.getRole("role4").id}`,
-				style: 2,
-				emoji: data.options.getString("role4_emoji") || null,
-				url: null,
-				disabled: false
-			});
-		}
+			if (data.options.getRole("role3") && data.options.getString("role3_text")) {
+				buttons.push({
+					type: 2,
+					label: data.options.getString("role3_text") || "React to get a role",
+					customId: `role_${await data.options.getRole("role3").id}`,
+					style: 2,
+					emoji: data.options.getString("role3_emoji") || null,
+					url: null,
+					disabled: false
+				});
+			}
 
-		if (data.options.getRole("role5") && data.options.getString("role5_text")) {
-			buttons.push({
-				type: 2,
-				label: data.options.getString("role5_text") || "React to get a role",
-				customId: `role_${await data.options.getRole("role5").id}`,
-				style: 2,
-				emoji: data.options.getString("role5_emoji") || null,
-				url: null,
-				disabled: false
-			});
-		}
+			if (data.options.getRole("role4") && data.options.getString("role4_text")) {
+				buttons.push({
+					type: 2,
+					label: data.options.getString("role4_text") || "React to get a role",
+					customId: `role_${await data.options.getRole("role4").id}`,
+					style: 2,
+					emoji: data.options.getString("role4_emoji") || null,
+					url: null,
+					disabled: false
+				});
+			}
 
-		await message.channel.send({
-			embeds: [{
+			if (data.options.getRole("role5") && data.options.getString("role5_text")) {
+				buttons.push({
+					type: 2,
+					label: data.options.getString("role5_text") || "React to get a role",
+					customId: `role_${await data.options.getRole("role5").id}`,
+					style: 2,
+					emoji: data.options.getString("role5_emoji") || null,
+					url: null,
+					disabled: false
+				});
+			}
+
+			await message.channel.send({
+				embeds: [{
 					title: data.options.getString("title") || `${bot.config.emojis.special} | Role Select`,
 					description: data.options.getString("description") || "Click the button(s) below to give yourself a role!",
 					color: Colors[color as keyof typeof Colors]
 				}],
-			components: [{
+				components: [{
 					type: 1,
 					components: buttons
 				}]
-		});
+			});
 
-		await message.replyT(`${bot.config.emojis.success} | Successfully created roles select panel.`);
-	} else if (state === "embed") {
-		const color = data.options.getString("color") || "Blue";
-		await message.channel.send({
-			embeds: [{
-				title: data.options.getString("title"),
-				description: data.options.getString("description").replaceAll("<br>", "\n"),
-				color: Colors[color as keyof typeof Colors],
-				thumbnail: { url: data.options.getString("image") }
-			}]
-		});
+			await message.replyT(`${bot.config.emojis.success} | Successfully created roles select panel.`);
+			break;
+		} case "embed": {
+			let title: any;
+			let color: any = "Blue";
+			let image: any, thumbnail: any;
+			let description: any = "> Here, you can put some text. You can use Discord markdown here as well.\n\n> ~~Strike~~ • __Underline__  • **Bold** • *Italics* • || Hidden 😉 || • [Click Here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)";
 
-		await message.replyT(`${bot.config.emojis.success} | Successfully created embed.`);
+			const editComponents = [{
+				type: 1,
+				components: [{
+					type: 2,
+					label: await message.translate("Title"),
+					emoji: bot.config.emojis.edit,
+					customId: "edit_title",
+					style: 2
+				}, {
+					type: 2,
+					label: await message.translate("Description"),
+					emoji: bot.config.emojis.edit,
+					customId: "edit_description",
+					style: 2
+				}, {
+					type: 2,
+					label: await message.translate("Thumbnail"),
+					emoji: bot.config.emojis.edit,
+					customId: "edit_thumbnail",
+					style: 2
+				}, {
+					type: 2,
+					label: await message.translate("Image"),
+					emoji: bot.config.emojis.edit,
+					customId: "edit_image",
+					style: 2
+				}, {
+					type: 2,
+					label: await message.translate("Done"),
+					emoji: bot.config.emojis.success,
+					customId: "done",
+					style: 3
+				}]
+			}, {
+				type: 1,
+				components: [{
+					type: 3,
+					customId: "embed_color_select",
+					placeholder: "Select a color for the embed.",
+					options: CColors.map((c: any) => {
+						return {
+							label: c.name,
+							emoji: c?.emoji,
+							value: c.value
+						}
+					}),
+					disabled: false
+				}]
+			}];
+
+			/* -------------------------------------------------- SEND MESSAGE --------------------------------------------------*/
+			const msg = await message.replyT({
+				embeds: [{
+					title,
+					description: description.replaceAll("\\n", "\n"),
+					thumbnail: { url: thumbnail },
+					image: { url: image },
+					color: Colors.Blue,
+					timestamp: new Date()
+				}],
+				components: editComponents,
+				fetchReply: true
+			});
+
+			/* -------------------------------------------------- GET INPUT --------------------------------------------------*/
+			async function getInput(msg: any, options: any) {
+				await msg.edit({
+					embeds: [{
+						title: `Editing ${options.title}`,
+						description: `Please enter a new ${options.title} text for the message.`,
+						color: Colors.Green
+					}],
+					components: []
+				});
+
+				const content = await msg.channel.awaitMessages({
+					max: 1,
+					time: options?.timeout || 30 * 1000,
+					filter: async (m: any) => {
+						if (!m?.content && options?.checkURL !== true) {
+							await msg.edit({
+								embeds: [{
+									title: `Editing ${options.title}`,
+									description: `Please send text, not an attachment.`,
+									color: Colors.Red
+								}]
+							});
+							return false;
+						} else if (m.content.length >= options.maxLength) {
+							await msg.edit({
+								embeds: [{
+									title: `Editing ${options.title}`,
+									description: `Please send text less than ${options.maxLength} characters.`,
+									color: Colors.Red
+								}]
+							});
+							return false;
+						}
+
+						await bot.wait(2000);
+
+						return true;
+					},
+					errors: ["time"]
+				}).then((collected: any) => {
+					if (collected.first()) {
+						const content = collected.first().content;
+						collected.first().delete();
+						if (content === "cancel") return options.previousValue;
+						else if (content.length > 0 && content.length <= options.maxLength) return content.replaceAll("\\n", "\n");
+					}
+				}).catch(() => options.previousValue);
+
+				return content;
+			}
+
+			/* -------------------------------------------------- HANDLE INPUT --------------------------------------------------*/
+			const collector = msg.createMessageComponentCollector({ time: 1200 * 1000 });
+			collector.on("collect", async (interaction: any) => {
+				interaction.deferUpdate().catch((): any => { });
+
+				switch (interaction.customId) {
+					case "edit_title": {
+						title = await getInput(msg, {
+							title: "Title",
+							previousValue: title,
+							maxLength: 4096,
+							timeout: 300 * 1000
+						});
+						break;
+					} case "edit_description": {
+						description = await getInput(msg, {
+							title: "Description",
+							previousValue: description,
+							maxLength: 256,
+							timeout: 600 * 1000
+						});
+						break;
+					} case "edit_thumbnail": {
+						thumbnail = await getInput(msg, {
+							title: "Thumbnail",
+							previousValue: thumbnail,
+							checkURL: true,
+							maxLength: 200,
+							timeout: 300 * 1000
+						});
+						break;
+					} case "edit_image": {
+						image = await getInput(msg, {
+							title: "Image",
+							previousValue: image,
+							checkURL: true,
+							maxLength: 200,
+							timeout: 300 * 1000
+						});
+						break;
+					} case "embed_color_select": { color = interaction.values[0]; break; }
+					case "done": { collector.stop(); break; }
+				}
+
+				interaction.customId !== "done" && await msg.edit({
+					embeds: [{
+						title,
+						description,
+						thumbnail: { url: thumbnail },
+						image: { url: image },
+						color: Colors[color as keyof typeof Colors],
+						timestamp: new Date()
+					}],
+					components: editComponents,
+					fetchReply: true
+				});
+			});
+			collector.on("end", async () => {
+				try { await msg?.edit({ components: [] }); } catch (err: any) { }
+			});
+		}
 	}
 }
 
@@ -203,7 +347,6 @@ export default new cmd(execute, {
 	perms: ["ManageGuild"],
 	usage: "(tickets|roles|embed) (title|description|color)",
 	slash: true,
-	ephemeral: true,
 	options: [{
 		type: 1,
 		name: "tickets",
@@ -305,25 +448,6 @@ export default new cmd(execute, {
 	}, {
 		type: 1,
 		name: "embed",
-		description: "Create an embed.",
-		options: [{
-			type: 3,
-			name: "description",
-			description: "The description for the embed.",
-			required: true
-		}, {
-			type: 3,
-			name: "title",
-			description: "The title for the embed."
-		}, {
-			type: 3,
-			name: "image",
-			description: "The image for the embed. Please use a valid URL containing https:// in the start."
-		}, {
-			type: 3,
-			name: "color",
-			description: "The color to ALL the ticket embeds.",
-			choices: CColors
-		}]
+		description: "Create an embed."
 	}]
 });
